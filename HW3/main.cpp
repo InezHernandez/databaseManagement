@@ -2,13 +2,12 @@
 
 #include <iostream>
 #include <string>
-#include <stdlib>
+#include <stdlib.h>
 
-using namespace std;
+using std::cout;
 
-int main()
-{
-    cout<<"Hello World";
+int main() {
+    cout << "Hello World";
 
     return 0;
 }

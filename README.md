@@ -1,6 +1,6 @@
 # databaseManagement
 
-Hash Indexing
-You can use following commands to compile and run C++ code:
-> g++ main.cpp -o main.out
-> main.out2
+General repo for all coding assignments in CS440.
+
+All directories will have a "run" script to execute the program. \
+You may have to allow execution of the script using "chmod +x run".
