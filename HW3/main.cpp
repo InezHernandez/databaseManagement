@@ -13,33 +13,34 @@ using std::cin;
 using std::string;
 using std::ifstream;
 
-// Generate the hash index file
-void createHashIndex() {
-	cout << "  Generating hash index...\n";
-}
+class HashIndex {
+	public:
+		void create() {
+			cout << "  Generating hash index...\n";
+		}
 
-// Lookup information based on user given ID
-void getHashIndex(string id) {
-	ifstream file;
-	file.open("EmployeeIndex.txt");
+		void getAtID(string id) {
+			ifstream file;
+			file.open("EmployeeIndex.txt");
 
-	// Check if the file opened properly
-	if (!file) {
-		cout << " x Index file doesn't exist, run \'C\' before \'L\'.\n";
-		return;
-	}
+			// Check if the file opened properly
+			if (!file) {
+				cout << " x Index file doesn't exist, run \'C\' before \'L\'.\n";
+				return;
+			}
 
-	cout << "  Looking up " << id << "\n";
-	string line;
+			cout << "  Looking up " << id << "\n";
+			string line;
 
-	// Loop through whole file
-	while (!file.eof()) {
-		// Find if the id occurs on the current line, print if so
-		getline(file, line);
-		if (line.find(id, 8))
-			cout << line << "\n";
-	}
-}
+			// Loop through whole file
+			while (!file.eof()) {
+				// Find if the id occurs on the current line, print if so
+				getline(file, line);
+				if (line.find(id, 8))
+					cout << line << "\n";
+			}
+		}
+};
 
 int main() {
 	bool running = true;
@@ -48,17 +49,19 @@ int main() {
 	// Main loop for user input handling.
 	while (running) {
 		// Get users input
+		HashIndex index;
 		string input;
 		cout << "> ";
 		getline(cin, input);
 
 		// Test for valid input and handle appropriately
 		if (input[0] == 'C' || input[0] == 'c') {
-			createHashIndex();
+			index.create();
 		}
 		else if (input[0] == 'L' || input[0] == 'l') {
 			if (input.length() > 2)
-				getHashIndex(input.substr(2));
+				// getHashIndex(input.substr(2));
+				index.getAtID(input.substr(2));
 			else
 				cout << " x Looking up a hash needs an id.\n";
 		} else if (input[0] == 'E' || input[0] == 'e') {
