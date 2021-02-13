@@ -6,13 +6,17 @@ if [[ $1 == "c" ]];then
 fi
 
 # remove old output file if it exists
-if [[ -f $main.out ]];then
-	rm main.out
-	echo "Removed old output file\n"
+if [[ -f ./app.out ]];then
+	rm ./app.out
 fi
 
-# Compile and run program
-g++ main.cpp -o main.out
-./main.out
+# Compile program
+g++ -std=c++11 main.cpp -o app.out
 
-echo
+# run out file if compilatoin successful
+if [[ -f ./app.out ]];then
+	./app.out
+fi
+
+# Print a newline
+# echo
