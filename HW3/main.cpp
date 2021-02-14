@@ -22,47 +22,52 @@ using std::to_string;
 
 #define MAX_CAPACITY 4096
 #define BLOCK_SIZE   716
+#define Employees vector<Employee>
+#define Buckets vector<Bucket>
 
 
 // Nodes for the index
 struct Employee {
 	string id;   // id
 	string info; // name, bio, mid
-	unsigned long eHash;
+	string binaryID;
+	// unsigned long eHash;
 	int size;
 
-	Employee(string sentID, string sentInfo, unsigned long sentHash) {
-		id = sentID;
-		info = sentInfo;
-		size = id.length() + info.length();
-		eHash = sentHash;
+	Employee(string sentID, string sentInfo, string sentBinary) {
+		id       = sentID;
+		info     = sentInfo;
+		binaryID = sentBinary;
+		// eHash    = sentHash;
+		size     = id.length() + info.length();
 	}
 };
 
 struct Block {
-	vector<Employee> records;
+	Employees records;
 	Block* overflow;
 };
 
-struct Bucket {
-	string key;
-	Block data;
-	Bucket* next;
-};
-
-struct BucketArray {
-	vector<Bucket> buckets;
-};
+struct Bucket { Block data; };
 
 
 class HashIndex {
 	private:
 		bool created;
 		int next, level, i;
-		vector<Employee> items;
-		BucketArray bucketArr;
+		Employees items;
+		Buckets bucketArr;
 
-		void reformatBuckets() {}
+		// Split the current bucket
+		// void splitBucket(Buckets arr, int n) {
+		// 	next++;
+		// 	if (next == n) {
+		// 		level++;
+				
+		// 	}
+
+
+		// }
 
 		// test if a specified bucket has room for another record
 		bool bucketCapacity(Bucket bucket) {
@@ -75,8 +80,10 @@ class HashIndex {
 
 			// tally overflow block data
 			block = *block.overflow;
-			for (int i = 0; i < block.records.size(); i++)
-				size += block.records.at(i).size;
+			if (&block != NULL) {
+				for (int i = 0; i < block.records.size(); i++)
+					size += block.records.at(i).size;
+			}
 
 			// return true if there's room, false otherwise
 			if ((float)size / MAX_CAPACITY >= 0.8 && size + BLOCK_SIZE <= MAX_CAPACITY)
@@ -91,18 +98,33 @@ class HashIndex {
 			return hashed(id.substr(id.length() - i));
 		}
 
+		// Add a new bucket to the bucket array
+		void addBucket() {
+			Employees tEmp;
+			Block* tBlockPointer = nullptr;
+			Block tBlock(tEmp, tBlockPointer);
+			Bucket tBucket(tBlock);
+			bucketArr.push_back(tBucket);
+		}
+
+		// Insert a given line of data into the bucket system
 		void insert(string line) {
 			if (!line.length()) return;
 
 			// Parse entry data and store in memory
 			string parsedID = line.substr(0, 8);
-			string parsedInfo = line.substr(9);
 			string binaryID = bitset<24>(stoi(parsedID)).to_string();
-			unsigned long hashedID = hashID(binaryID, i);
-			items.push_back(Employee(parsedID, parsedInfo, hashedID));
+			Employee temp(parsedID, line.substr(9), binaryID);
+			items.push_back(temp);
 
-			// bucket stuff???
-			// todo
+			// insert data into a bucket
+			int bucketIndex = stoi(binaryID.substr(binaryID.length() - i), nullptr, 2);
+			Bucket selectedBucket = bucketArr.at(bucketIndex);
+			if (bucketCapacity(selectedBucket))
+				selectedBucket.data.records.push_back(temp);
+			else
+				return;
+				// splitBucket();
 		}
 
 	public:
@@ -110,7 +132,8 @@ class HashIndex {
 			created = false;
 			level = 1;
 			next = 0;
-			i = 2;
+			i = 3;
+			addBucket();
 		}
 
 		// Creation function
@@ -138,8 +161,8 @@ class HashIndex {
 			}
 
 			// print hashes
-			for (int i = 0; i < items.size(); i++)
-				cout << items.at(i).id << ": " << items.at(i).eHash << "\n";
+			// for (int i = 0; i < items.size(); i++)
+			// 	cout << items.at(i).id << ": " << items.at(i).eHash << "\n";
 
 			// Test if creation was successful
 			file.close();
