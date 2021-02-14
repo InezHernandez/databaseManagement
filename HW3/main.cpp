@@ -43,12 +43,19 @@ struct Employee {
 	}
 };
 
-struct Block {
-	Employees records;
-	Block* overflow;
+struct Overflow {
+	Employee record;
 };
 
-struct Bucket { Block data; };
+struct Block {
+	Employees records;
+	Overflow* overflow;
+};
+
+struct Bucket {
+	string key;
+	Block data;
+};
 
 
 class HashIndex {
@@ -59,15 +66,30 @@ class HashIndex {
 		Buckets bucketArr;
 
 		// Split the current bucket
-		// void splitBucket(Buckets arr, int n) {
-		// 	next++;
-		// 	if (next == n) {
-		// 		level++;
-				
-		// 	}
+		void splitBucket(int n, Employee emp) {
+			// Allocate and assign overflow block
+			// bucketArr.at(n).data.overflow = (struct Overflow*)malloc(sizeof(emp));
+			// bucketArr.at(n).data.overflow->record = emp;
 
+			addBucket();
+			int nextSize = bucketArr.at(next).data.records.size();
 
-		// }
+			// Move data to new block if there's more than 1 item
+			if (nextSize > 1) {
+				int middle = ceil((float)nextSize / 2);
+				for (int i = middle; i < nextSize - 1; i++) {
+					bucketArr.at(bucketArr.size() - 1).data.records.push_back(bucketArr.at(next).data.records.at(i)); // add to newest bucket
+					bucketArr.at(next).data.records.pop_back();
+				}
+			}
+
+			// Update next pointer
+			next++;
+			if (next == n) {
+				level++;
+				next = 0;
+			}
+		}
 
 		// test if a specified bucket has room for another record
 		bool bucketCapacity(Bucket bucket) {
@@ -77,16 +99,14 @@ class HashIndex {
 			Block block = bucket.data;
 			for (int i = 0; i < block.records.size(); i++)
 				size += block.records.at(i).size;
-
-			// tally overflow block data
-			block = *block.overflow;
-			if (&block != NULL) {
-				for (int i = 0; i < block.records.size(); i++)
-					size += block.records.at(i).size;
-			}
+			
+			// tally overflow block data if it exists
+			// Overflow* overflow = block.overflow;
+			// if (overflow != NULL)
+			// 	size += overflow->record.size;
 
 			// return true if there's room, false otherwise
-			if ((float)size / MAX_CAPACITY >= 0.8 && size + BLOCK_SIZE <= MAX_CAPACITY)
+			if ((float)size / MAX_CAPACITY < 0.8 && size + BLOCK_SIZE <= MAX_CAPACITY && block.records.size() < 5)
 				return true;
 			else
 				return false;
@@ -100,10 +120,7 @@ class HashIndex {
 
 		// Add a new bucket to the bucket array
 		void addBucket() {
-			Employees tEmp;
-			Block* tBlockPointer = nullptr;
-			Block tBlock(tEmp, tBlockPointer);
-			Bucket tBucket(tBlock);
+			Bucket tBucket;
 			bucketArr.push_back(tBucket);
 		}
 
@@ -119,12 +136,16 @@ class HashIndex {
 
 			// insert data into a bucket
 			int bucketIndex = stoi(binaryID.substr(binaryID.length() - i), nullptr, 2);
-			Bucket selectedBucket = bucketArr.at(bucketIndex);
-			if (bucketCapacity(selectedBucket))
-				selectedBucket.data.records.push_back(temp);
+			if (bucketCapacity(bucketArr.at(bucketIndex)))
+				bucketArr.at(bucketIndex).data.records.push_back(temp);
 			else
-				return;
-				// splitBucket();
+				splitBucket(bucketIndex, temp);
+		}
+
+		void printBucket(int n) {
+			Bucket bucket = bucketArr.at(n);
+			cout << "Bucket @ " << n << "\n";
+			cout << " - # of Records: " << bucket.data.records.size() << "\n";
 		}
 
 	public:
@@ -132,7 +153,11 @@ class HashIndex {
 			created = false;
 			level = 1;
 			next = 0;
-			i = 3;
+			i = 2;
+
+			addBucket();
+			addBucket();
+			addBucket();
 			addBucket();
 		}
 
@@ -159,10 +184,6 @@ class HashIndex {
 				getline(file, line);
 				insert(line);
 			}
-
-			// print hashes
-			// for (int i = 0; i < items.size(); i++)
-			// 	cout << items.at(i).id << ": " << items.at(i).eHash << "\n";
 
 			// Test if creation was successful
 			file.close();
@@ -202,6 +223,14 @@ class HashIndex {
 
 			file.close();
 		}
+
+		// free allocated overflow blocks from memory
+		void freeOverflow() {
+			for (int i = 0; i < bucketArr.size(); i++) {
+				if (bucketArr.at(i).data.overflow != NULL)
+					free(bucketArr.at(i).data.overflow);
+			}
+		}
 };
 
 
@@ -229,6 +258,7 @@ int main() {
 				cout << "  [ERR] Looking up a hash needs an id.\n";
 		} else if (input[0] == 'E' || input[0] == 'e') {
 			running = false;
+			// index.freeOverflow();
 		} else if (input.length() == 0) {
 			// skip if nothing is entered
 			continue;
