@@ -99,7 +99,7 @@ class HashIndex {
 			Block block = bucket.data;
 			for (int i = 0; i < block.records.size(); i++)
 				size += block.records.at(i).size;
-			
+
 			// tally overflow block data if it exists
 			// Overflow* overflow = block.overflow;
 			// if (overflow != NULL)
@@ -170,7 +170,7 @@ class HashIndex {
 
 			// Check if input file exists
 			ifstream file;
-			file.open("Employees.csv");
+			file.open("employee.csv");
 
 			if (!file) {
 				cout << "  [ERR] No input file found, please check your working directory.\n";
