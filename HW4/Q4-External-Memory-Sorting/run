@@ -7,15 +7,15 @@ fi
 
 # remove old output file if it exists
 if [[ -f ./app.out ]];then
-	rm ./app.out
+	rm ./q4.out
 fi
 
 # Compile program
-g++ -std=c++11 main.cpp -o app.out
+g++ -std=c++11 main-q4.cpp -o q4.out
 
 # run out file if compilatoin successful
-if [[ -f ./app.out ]];then
-	./app.out
+if [[ -f ./q4.out ]];then
+	./q4.out
 fi
 
 # Print a newline
