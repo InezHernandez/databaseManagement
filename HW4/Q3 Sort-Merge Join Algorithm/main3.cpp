@@ -13,6 +13,10 @@
 #include <sstream>
 #include <cassert>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -22,7 +26,12 @@ const int STRING_SIZE = 40;
 // Each block can fit at most one tuple of an input relation.
 // There are at most 22 blocks available to the join algorithm in the main memory:
 const int MAX_BLOCKS = 22;
+const int MAX_VAL = 500; // will be used as an arbitrary value for size of file
+int empSize;
+// now adding size of dept file:
+int deptSize;
 
+// will need to read in the emp and dept file to sort:
 struct EmpBlock {
     int eid;
     string ename;
@@ -37,100 +46,138 @@ struct DeptBlock {
     int managerid;
 };
 
-
 // Grab a single block from the emp.csv file, in theory if a block was larger than
 // one tuple, this function would return an array of EmpBlocks and the entire if
 // and else statement would be wrapped in a loop for x times based on block size
-EmpBlock grabEmp(fstream &empin) {
-    string line, word;
-    EmpBlock emp;
+EmpBlock *grabEmp() {
+  fstream empin;
+  empin.open("Emp.csv", ios::in);
+  string line, word;
+  EmpBlock *emp;
+  // setting up a temporary struct so we can fill in the sorted values
+  EmpBlock *temp = new EmpBlock[MAX_VAL];
+  int i = 0, j = 0;
+  // flags check when relations are done being read
+  bool flag = true;
+
+  // loop through the file and fill in the unsorted date into a temp struct
+  // once done we can reassign values to the emp struct
+  while (flag) {
     // grab entire line
     if (getline(empin, line, '\n')) {
         // turn line into a stream
         stringstream s(line);
         // gets everything in stream up to comma
         getline(s, word,',');
-        emp.eid = stoi(word);
+        temp[i].eid = stoi(word);
         getline(s, word, ',');
-        emp.ename = word;
+        temp[i].ename = word;
         getline(s, word, ',');
-        emp.age = stoi(word);
+        temp[i].age = stoi(word);
         getline(s, word, ',');
-        emp.salary = stod(word);
-        return emp;
-    } else {
-        emp.eid = -1;
-        return emp;
+        temp[i].salary = stod(word);
+        i++;
     }
+    else
+    {
+      flag = false; // break the while loop
+    }
+  }
+
+  empSize = i - 1;
+  // in prior step above we set our temp to [MAX_VAL]
+  // Now that we know the size of the struct array, lets just return that:
+  EmpBlock *returnEmp = new EmpBlock[empSize + 1];
+  for(j = 0; j <= empSize; j++)
+  {
+    // simply copy over to our new struct that is sized correctly
+    returnEmp[j] = temp[j];
+  }
+
+  // return struct
+  return returnEmp;
 }
 
-// Grab a single block from the dept.csv file, in theory if a block was larger than
-// one tuple, this function would return an array of DeptBlocks and the entire if
+// Grab all of dept.csv file, in theory if a block was larger than
+// one tuple, this function would return an array of EmpBlocks and the entire if
 // and else statement would be wrapped in a loop for x times based on block size
-DeptBlock grabDept(fstream &deptin) {
-    string line, word;
-    DeptBlock dept;
+DeptBlock *grabDept() {
+  fstream deptin;
+  deptin.open("Dept.csv", ios::in);
+  string line, word;
+  DeptBlock dept;
+  // setting up a temporary struct so we can fill in the sorted values
+  DeptBlock *temp = new DeptBlock[MAX_VAL];
+  int i = 0, j = 0;
+  // flags check when relations are done being read
+  bool flag = true;
+
+  // loop through the file and fill in the unsorted date into a temp struct
+  // once done we can reassign values to the emp struct
+  while (flag) {
+    // grab entire line
     if (getline(deptin, line, '\n')) {
+        // turn line into a stream
         stringstream s(line);
+        // gets everything in stream up to comma
         getline(s, word,',');
-        dept.did = stoi(word);
+        temp[i].did = stoi(word);
         getline(s, word, ',');
-        dept.dname = word;
+        temp[i].dname = word;
         getline(s, word, ',');
-        dept.budget = stod(word);
+        temp[i].budget = stod(word);
         getline(s, word, ',');
-        dept.managerid = stoi(word);
-        return dept;
-    } else {
-        dept.did = -1;
-        return dept;
+        temp[i].managerid = stoi(word);
+        i++;
     }
+    else
+    {
+      flag = false; // break the while loop
+    }
+  }
+
+  deptSize = i - 1;
+  // in prior step above we set our temp to [MAX_VAL]
+  // Now that we know the size of the struct array, lets just return that:
+  DeptBlock *returnDept = new DeptBlock[deptSize + 1];
+  for(j = 0; j <= deptSize; j++)
+  {
+    // simply copy over to our new struct that is sized correctly
+    returnDept[j] = temp[j];
+  }
+
+  // return struct
+  return returnDept;
 }
 
 //Print out the attributes from emp and dept when a join condition is met
-void printJoin(EmpBlock emp, DeptBlock dept, fstream &fout) {
-    fout << emp.eid << ',' << emp.ename << ',' << emp.age << ','
-        << emp.salary << ',' << dept.did << ',' << dept.dname << ','
-        << dept.budget << "\n";
+void printJoin(EmpBlock *emp)
+{
+  int j = 0;
+  for(j = 0; j <= empSize; j++)
+  {
+    cout << "# " << j << " " << emp[j].eid << " name:" << emp[j].ename <<"\n";
+  }
+
+}
+
+// Starting by sorting the emp struct, sort by eid
+// pass in our unsorted struct and returns sorted struct
+// Sources: https://www.geeksforgeeks.org/structure-sorting-in-c/
+bool sortEmp(EmpBlock lhs, EmpBlock rhs)
+{
+  return lhs.eid < rhs.eid;
 }
 
 int main() {
-  // open file streams to read and write
-  fstream empin;
-  fstream joinout;
-  empin.open("Emp.csv", ios::in);
-  joinout.open("Join.csv", ios::out | ios::app);
-  // flags check when relations are done being read
-  bool flag = true;
-  while (flag) {
-      // FOR BLOCK IN RELATION EMP
+  EmpBlock *empBlock = grabEmp();
 
-      // grabs a block
-      EmpBlock empBlock = grabEmp(empin);
-      // checks if filestream is empty
-      if (empBlock.eid == -1) {
-          flag = false;
-      }
-      bool iflag = true;
-      // opens new filestream for dept relation (needs to read in a new one each time a new emp block is seen)
-      fstream deptin;
-      deptin.open("Dept.csv", ios::in);
-      while (iflag) {
-          // FOR BLOCK IN RELATION DEPT
-          DeptBlock deptBlock = grabDept(deptin);
+  DeptBlock *deptBlock = grabDept();
+  // now that both files have been read and structs filled, we can sort
+  // will want to pass in our unsorted strcut and sort by the dept.managerid and the Emp.eid for our merge
+  // https://www.cplusplus.com/forum/general/97555/
+  std::sort(empBlock, empBlock + empSize + 1, sortEmp);
+  // success! Currently orders from least to greatest
+  printJoin(empBlock);
 
-          // in theory these would iterate through the two blocks: empBlock and deptBlock
-          // but since both only contain one tuple, no iteration is needed
-          if (deptBlock.did == -1) {
-              iflag = false;
-          } else {
-              // check join condition and print join to output file
-              if (deptBlock.managerid == empBlock.eid) {
-                  printJoin(empBlock, deptBlock, joinout);
-              }
-          }
-      }
-  }
-
-  return 0;
 }
