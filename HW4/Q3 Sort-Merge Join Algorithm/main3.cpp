@@ -30,6 +30,8 @@ const int MAX_VAL = 500; // will be used as an arbitrary value for size of file
 int empSize;
 // now adding size of dept file:
 int deptSize;
+// for join:
+int joinSize;
 
 // will need to read in the emp and dept file to sort:
 struct EmpBlock {
@@ -44,6 +46,18 @@ struct DeptBlock {
     string dname;
     double budget;
     int managerid;
+};
+
+// We will also now need a new struct to hold the merged information:
+struct joinED {
+  int did;
+  int eid;
+  string dname;
+  double budget;
+  int managerid;
+  string ename;
+  int age;
+  double salary;
 };
 
 // Grab a single block from the emp.csv file, in theory if a block was larger than
@@ -151,14 +165,14 @@ DeptBlock *grabDept() {
 }
 
 //Print out the attributes from emp and dept when a join condition is met
-void printJoin(EmpBlock *emp)
-{
+void printJoin(joinED *join, fstream &fout) {
   int j = 0;
-  for(j = 0; j <= empSize; j++)
+  for(j = 0; j < joinSize; j++)
   {
-    cout << "# " << j << " " << emp[j].eid << " name:" << emp[j].ename <<"\n";
+    fout << join[j].did << ',' << join[j].dname << ',' << join[j].budget << ','
+    << join[j].managerid << ',' << join[j].eid << ',' << join[j].ename << ','
+    << join[j].age << join[j].salary << "\n";
   }
-
 }
 
 // Starting by sorting the emp struct, sort by eid
@@ -169,15 +183,110 @@ bool sortEmp(EmpBlock lhs, EmpBlock rhs)
   return lhs.eid < rhs.eid;
 }
 
-int main() {
-  EmpBlock *empBlock = grabEmp();
+// Same as before, will simply sort by dept.managerid
+// already checked functionality with emp so simply duplicating
+// pass in our unsorted struct and returns sorted struct
+// Sources: https://www.geeksforgeeks.org/structure-sorting-in-c/
+bool sortDept(DeptBlock lhs, DeptBlock rhs)
+{
+  return lhs.managerid < rhs.managerid;
+}
 
+
+int main()
+{
+  // variables for merge sort
+  int outerI = 0, outerJ = 0, i, j;
+  int x; // Join index
+  int blockCheck; // for keeping track of 22 block size restriction
+  bool check = false;
+
+  // getting join file information ready
+  fstream joinout;
+  joinout.open("join.csv", ios::out | ios::app);
+  joinSize = 0;
+
+  // get structs
+  EmpBlock *empBlock = grabEmp();
   DeptBlock *deptBlock = grabDept();
+  joinED *join = new joinED[MAX_VAL]; // we also need to add struct to hold join
+
   // now that both files have been read and structs filled, we can sort
   // will want to pass in our unsorted strcut and sort by the dept.managerid and the Emp.eid for our merge
   // https://www.cplusplus.com/forum/general/97555/
   std::sort(empBlock, empBlock + empSize + 1, sortEmp);
   // success! Currently orders from least to greatest
-  printJoin(empBlock);
+  // same deal as with emp:
+  std::sort(deptBlock, deptBlock + deptSize + 1, sortDept);
 
+  // now that everything is sorted we can merge:
+  // pseudo code: https://www.youtube.com/watch?v=HyZtBGXLN00 for some pseudo code of sort-merge join
+	do
+  {
+		i = outerI;
+    j = outerJ;
+
+    // while we are within the MAX_BLOCKS allocated
+		for(blockCheck = 0; blockCheck <= MAX_BLOCKS; blockCheck++)
+    {
+
+      // from pseudo code, if PR.x == PS.x
+      // where R = dept and S = emp
+      if(deptBlock[i].managerid == empBlock[j].eid)
+      {
+
+        // found a match, add to join
+        // incriment join size, will be used when writing to file join.csv
+        joinSize++;
+
+        // now simply assign the values of to our join struct
+        join[x].eid = empBlock[j].eid;
+        join[x].ename = empBlock[j].ename;
+        join[x].age = empBlock[j].age;
+        join[x].salary = empBlock[j].salary;
+        join[x].did = deptBlock[i].did;
+        join[x].dname = deptBlock[i].dname;
+        join[x].budget = deptBlock[i].budget;
+        join[x].managerid = deptBlock[i].managerid;
+        //cout << "match: " << joinSize << " i: " << i << " j: " << j << "\n";
+
+        // move array counts forward
+        x++;
+        i++;
+      }
+
+      else if(deptBlock[i].managerid < empBlock[j].eid)
+      {
+        // else if PR.x <= PS.x, then PR++
+        // if the emp.eid is less than dept.mangerid then we move forward
+        // the emp pointer since we always move forward the smallest one
+        i++;
+      }
+
+      else if(deptBlock[i].managerid > empBlock[j].eid)
+      {
+        // else if PR.x > PS.x, then PS++
+        // otherwise if the dept.managerid is less than the emp.eid move dept pointer
+        j++;
+      }
+
+		} // end for loop
+
+    // update outer loop count
+		outerI = outerI + i;
+		outerJ = outerJ + j;
+
+    // loop control check, had to to +1 because of off indexing
+		if(outerI + 1 > deptSize || outerJ + 1 > empSize)
+    {
+      //cout << "outerI: " << outerI << " OuterJ: " << outerJ << "\n";
+      // if we reached the end of either struct, return true
+			check = true;
+		}
+    
+  } while(check != true);
+
+  // sending to be printed to file
+  printJoin(join, joinout);
+  return 0;
 }
