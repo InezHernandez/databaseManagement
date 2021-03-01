@@ -6,7 +6,7 @@ if [[ $1 == "c" ]];then
 fi
 
 # remove old output file if it exists
-if [[ -f ./app.out ]];then
+if [[ -f ./q4.out ]];then
 	rm ./q4.out
 fi
 
