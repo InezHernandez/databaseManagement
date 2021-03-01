@@ -203,7 +203,7 @@ int main()
 
   // getting join file information ready
   fstream joinout;
-  joinout.open("join.csv", ios::out | ios::app);
+  joinout.open("join.csv", ios::out | ios::trunc);
   joinSize = 0;
 
   // get structs
@@ -283,7 +283,7 @@ int main()
       // if we reached the end of either struct, return true
 			check = true;
 		}
-    
+
   } while(check != true);
 
   // sending to be printed to file
