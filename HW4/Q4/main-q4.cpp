@@ -29,6 +29,13 @@ void printEmployees(vector<EmpBlock> employees);
 
 // uses the two pointer method to sort a given block
 void mergeBlock(vector<EmpBlock>& block, int left, int middle, int right) {
+	cout << "========================\n";
+	// for (int i = left; i < right; i++) {
+	// 	EmpBlock emp = block.at(i);
+	// 	cout << emp.eid << ", " << emp.ename << "\n";
+	// }
+	printEmployees(block);
+
 	int i, j = 0;
 	int k = left;
 	int lLen = middle - left + 1;
@@ -43,7 +50,7 @@ void mergeBlock(vector<EmpBlock>& block, int left, int middle, int right) {
 
 	// merge temp arrays
 	while (i < lLen && j < rLen) {
-		if (lArr.at(i).eid < rArr.at(j).eid) {
+		if (lArr.at(i).eid <= rArr.at(j).eid) {
 			block[k] = lArr[i];
 			i++;
 		} else {
@@ -64,6 +71,12 @@ void mergeBlock(vector<EmpBlock>& block, int left, int middle, int right) {
 		j++;
 		k++;
 	}
+
+	// cout << "========================\n";
+	// for (int i = left; i < right; i++) {
+	// 	EmpBlock emp = block.at(i);
+	// 	cout << emp.eid << ", " << emp.ename << ", " << "\n";
+	// }
 }
 
 // uses merge sort to sort a given block
@@ -173,7 +186,7 @@ vector<EmpBlock> getEmployees() {
 	string line, word;
 	
 	ifstream empFile;
-	empFile.open("Emp-2.csv");
+	empFile.open("Emp.csv");
 
 	if (!empFile) {
 		empFile.close();
