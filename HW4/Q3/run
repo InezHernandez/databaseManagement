@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# clear if parameter allow
+if [[ $1 == "c" ]];then
+	clear
+fi
+
+# remove old output file if it exists
+if [[ -f ./q3.out ]];then
+	rm ./q3.out
+fi
+
+# Compile program
+g++ -std=c++11 main-q3.cpp -o q3.out
+
+# run out file if compilatoin successful
+if [[ -f ./q3.out ]];then
+	./q3.out
+fi
+
+# Print a newline
+# echo
