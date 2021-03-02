@@ -29,14 +29,9 @@ void printEmployees(vector<EmpBlock> employees);
 
 // uses the two pointer method to sort a given block
 void mergeBlock(vector<EmpBlock>& block, int left, int middle, int right) {
-	cout << "========================\n";
-	// for (int i = left; i < right; i++) {
-	// 	EmpBlock emp = block.at(i);
-	// 	cout << emp.eid << ", " << emp.ename << "\n";
-	// }
-	printEmployees(block);
+	if (block.size() == 1) return; // no need to sort one element
 
-	int i, j = 0;
+	int i = 0, j = 0;
 	int k = left;
 	int lLen = middle - left + 1;
 	int rLen = right - middle;
@@ -71,12 +66,6 @@ void mergeBlock(vector<EmpBlock>& block, int left, int middle, int right) {
 		j++;
 		k++;
 	}
-
-	// cout << "========================\n";
-	// for (int i = left; i < right; i++) {
-	// 	EmpBlock emp = block.at(i);
-	// 	cout << emp.eid << ", " << emp.ename << ", " << "\n";
-	// }
 }
 
 // uses merge sort to sort a given block
@@ -164,9 +153,9 @@ void printEmployees(vector<EmpBlock> employees) {
 void writeEmployees(vector<EmpBlock> employees) {
 	// Verify employees were sorted, write if so
 	int index = verifySorted(employees);
-	if (index) {
+	if (index != -1) {
 		cout << "Employee list failed sort at entry #" << index + 1 << ".\n";
-		// return;
+		return;
 	}
 	
 	ofstream file;
@@ -216,9 +205,7 @@ vector<EmpBlock> getEmployees() {
 
 int main() {
 	vector<EmpBlock> employees = getEmployees();
-	// vector<EmpBlock> sorted = sortEmployees(employees);
-	// writeEmployees(sorted);
-	mergeSort(employees, 0, employees.size() - 1);
-	writeEmployees(employees);
+	vector<EmpBlock> sorted = sortEmployees(employees);
+	writeEmployees(sorted);
 	return 0;
 }

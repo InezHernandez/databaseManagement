@@ -1,0 +1,102 @@
+========================
+0 | 0 | 1
+423977, Kathy, 31, 143722
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+525868, Allis, 70, 1.13963e+06
+========================
+2 | 2 | 3
+806470, Eadie, 53, 550918
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+27513, Zondra, 64, 433848
+========================
+0 | 1 | 3
+423977, Kathy, 31, 143722
+525868, Allis, 70, 1.13963e+06
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+27513, Zondra, 64, 433848
+806470, Eadie, 53, 550918
+========================
+4 | 4 | 5
+680641, Meg, 46, 214084
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+804520, Emylee, 58, 1.07592e+06
+========================
+6 | 6 | 7
+400566, Eugine, 26, 58107
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+449355, Felice, 49, 969043
+========================
+4 | 5 | 7
+680641, Meg, 46, 214084
+804520, Emylee, 58, 1.07592e+06
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+400566, Eugine, 26, 58107
+449355, Felice, 49, 969043
+========================
+0 | 3 | 7
+27513, Zondra, 64, 433848
+423977, Kathy, 31, 143722
+525868, Allis, 70, 1.13963e+06
+806470, Eadie, 53, 550918
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+400566, Eugine, 26, 58107
+449355, Felice, 49, 969043
+680641, Meg, 46, 214084
+804520, Emylee, 58, 1.07592e+06
+========================
+8 | 8 | 9
+338163, Clo, 54, 803059
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+162567, Josephine, 29, 697081
+========================
+10 | 10 | 11
+51891, Kaia, 39, 930278
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+263842, Roslyn, 43, 1.39483e+06
+========================
+8 | 9 | 11
+162567, Josephine, 29, 697081
+338163, Clo, 54, 803059
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+51891, Kaia, 39, 930278
+263842, Roslyn, 43, 1.39483e+06
+========================
+12 | 12 | 13
+783773, Belva, 47, 1.20282e+06
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+48479, Barbi, 58, 654654
+========================
+12 | 13 | 14
+48479, Barbi, 58, 654654
+783773, Belva, 47, 1.20282e+06
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+164725, Jolyn, 45, 862190
+========================
+8 | 11 | 14
+51891, Kaia, 39, 930278
+162567, Josephine, 29, 697081
+263842, Roslyn, 43, 1.39483e+06
+338163, Clo, 54, 803059
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+48479, Barbi, 58, 654654
+164725, Jolyn, 45, 862190
+783773, Belva, 47, 1.20282e+06
+========================
+0 | 7 | 14
+27513, Zondra, 64, 433848
+400566, Eugine, 26, 58107
+423977, Kathy, 31, 143722
+449355, Felice, 49, 969043
+525868, Allis, 70, 1.13963e+06
+680641, Meg, 46, 214084
+804520, Emylee, 58, 1.07592e+06
+806470, Eadie, 53, 550918
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+48479, Barbi, 58, 654654
+51891, Kaia, 39, 930278
+162567, Josephine, 29, 697081
+164725, Jolyn, 45, 862190
+263842, Roslyn, 43, 1.39483e+06
+338163, Clo, 54, 803059
+783773, Belva, 47, 1.20282e+06
+Employee list failed sort at entry #0.
