@@ -159,7 +159,7 @@ void writeEmployees(vector<EmpBlock> employees) {
 	}
 	
 	ofstream file;
-	file.open("EmpSorted.csv", ios::trunc);
+	file.open("EmpSorted.csv", ios::trunc); // trunc erases previous data
 
 	for (int i = 0; i < employees.size(); i++) {
 		EmpBlock emp = employees.at(i);
