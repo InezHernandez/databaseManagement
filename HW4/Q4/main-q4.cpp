@@ -152,11 +152,11 @@ void printEmployees(vector<EmpBlock> employees) {
 // write every employee to a file (EmpSorted.csv)
 void writeEmployees(vector<EmpBlock> employees) {
 	// Verify employees were sorted, write if so
-	int index = verifySorted(employees);
-	if (index != -1) {
-		cout << "Employee list failed sort at entry #" << index + 1 << ".\n";
-		return;
-	}
+	// int index = verifySorted(employees);
+	// if (index != -1) {
+	// 	cout << "Employee list failed sort at entry #" << index + 1 << ".\n";
+	// 	return;
+	// }
 	
 	ofstream file;
 	file.open("EmpSorted.csv", ios::trunc); // trunc erases previous data
@@ -194,7 +194,7 @@ vector<EmpBlock> getEmployees() {
 		getline(s, word, ',');
 		emp.age = stoi(word);
 		getline(s, word, ',');
-		emp.salary = stod(word); // for some reason stod() messes up on salaries > 999999??? no clue
+		emp.salary = stod(word); // for some reason stod() messes up on salaries > 999999??? no clue why
 
 		employees.push_back(emp);
 	}
